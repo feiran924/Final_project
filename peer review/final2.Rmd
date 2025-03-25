@@ -1,0 +1,69 @@
+---
+title: "Final Project"
+author: "Taiko Nakazawa"
+date: "2025-02-21"
+output: html_document
+---
+
+```{r, setup, echo = FALSE}
+library(knitr)
+library(dplyr)
+
+opts_chunk$set(
+  echo = FALSE, warning = TRUE, message = FALSE
+)
+
+```
+
+## Introduction
+
+This document analyzes the dataset "Mean age at death", provided by the Institute for Health Metrics and Evaluation (IHME) (https://www.healthdata.org). This dataset contains information on the mean age at death due to suicide from 1990 to 2021. The objective of this analysis is to understand the trends and patterns in the mean age at death over the years and to identify any significant changes or observations.
+
+```{r, load-data}
+library(httr)
+library(readr)
+
+  data_url <- "https://ghdx.healthdata.org/sites/default/files/record-attached-files/IHME_GBD_2021_SUICIDE_1990_2021_DEATHS_MEAN_AGE_Y2025M02D12_0.CSV"
+response <- GET(data_url)
+
+  data <- read_csv(content(response, as = "text"))
+```
+
+## Analysis
+
+### Mean Age at Death Over the Years
+
+The following table shows the mean age at death due to suicide in the global for each year:
+
+```{r, make-table}
+library(dplyr)
+library(ggplot2)
+library(knitr)
+
+filtered_data <- data %>%
+  filter(sex_id == 3) %>%
+  filter(location_name == "Global") %>%
+  filter(cause_name == "Self-harm") %>%
+  select(year_id, val)
+
+mean_age_table <- filtered_data %>%
+  arrange(year_id)
+
+kable(mean_age_table, col.names = c("Year", "Mean Age at Death"), caption = "Mean Age at Death Due to Suicide Over the Years")
+```
+
+### Trends in Mean Age at Death
+
+The figure below illustrates the trend in mean age at death due to suicide from 1990 to 2021:
+
+```{r, plot-trend}
+ggplot(filtered_data, aes(x = year_id, y = val)) +
+  geom_line(color = "blue", size = 1) +
+  geom_point(color = "red", size = 2) +
+  labs(title = "Trends in Mean Age at Death Due to Suicide (Both Sexes)",
+       x = "Year",
+       y = "Mean Age at Death (Years)") +
+  theme_minimal()
+```
+
+The plot shows the changes in the mean age at death due to suicide over the years. Mean age has consistently increased since 1990, with an increase of more than 4 years between 1990 and 2020

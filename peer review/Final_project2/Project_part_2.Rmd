@@ -1,0 +1,77 @@
+---
+title: "Project_part_2"
+author: "Peicheng Ji"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+```{r loadpackage,include=FALSE}
+#Packages are loaded here.
+
+library(ggplot2)
+library(here)
+library(gtsummary)
+library(readr)
+
+```
+
+# Introduction
+This report uses the Heart Failure Clinical Records dataset from the UCI Machine Learning Data Warehouse. The dataset consists of 299 clinical records of patients with heart failure, and each record contains 13 characteristics, such as the patient's age, sex, blood level of CPK enzyme (cpk), serum creatinine, and left ventricular ejection fraction. In addition, the most important outcome variable is the “death event”, which indicates whether the patient died during the follow-up period.
+
+The main goal of this analysis was to investigate the relationship between these clinical characteristics and death events, in order to explore which factors have a greater impact on the survival of patients with heart failure. These findings can inform subsequent prognostic assessments and clinical decisions.
+
+```{r loaddata}
+heart_data <- read_csv("heart_failure_clinical_records_dataset.csv")
+# Display the first few rows of the dataset
+head(heart_data)
+```
+
+# Table and description
+Here I make a table from the data.
+```{r table&description}
+# Create a summary table for key variables
+select_data = heart_data %>%
+  select(age, serum_sodium, serum_creatinine, high_blood_pressure, smoking, diabetes,DEATH_EVENT)
+
+summary_table <- tbl_summary(
+  data=select_data,
+  by = DEATH_EVENT,
+  
+  label = list(
+    age ~ "Age",
+    serum_sodium ~ "Serum Sodium (mEq/L)",
+    serum_creatinine ~ "Serum Creatinine (mg/dL)",
+    high_blood_pressure ~ "High Blood Pressure",
+    diabetes ~ "Diabetes",
+    smoking ~ "Smoking"
+  )
+) %>%
+modify_header(label = "**Variable**")%>%
+modify_spanning_header(
+    all_stat_cols() ~ "**Death Event**"
+  )
+# Print the summary table
+summary_table
+```
+## Description for the table
+Compared with those who did not die (N=203), those who did die (N=96) were older (median 65 vs. 60 years), had higher serum creatinine levels (1.30 mg/dL vs. 1.00 mg/dL), slightly lower serum sodium (135.5 mEq/L vs. 137.0 mEq/L), and higher prevalence of hypertension (41% vs. 33%); however, there were few differences in smoking (31% vs. 33%) and diabetes (42% vs. 42%). 33%); however, there were few differences in smoking prevalence (31% vs. 33%) and diabetes prevalence (42% vs. 42%).
+
+# Figure
+```{r plot}
+# Create a box plot
+box_plot1 = ggplot(heart_data, aes(x = as.factor(DEATH_EVENT), y = age, fill = as.factor(DEATH_EVENT))) +
+  geom_boxplot() +
+  labs(title = "Age by Death Event",
+       x = "Whether the patient died during the follow-up period",
+       y = "Age",
+       fill = "Death Event") +
+  scale_fill_manual(values = c("0" = "blue", "1" = "red"))
+box_plot1
+```
+
+## Description for the figure
+The boxplot for Age by Death Event illustrates that patients in Group 0 (No Death Event) have a median age at 60, with an interquartile range (IQR) extending roughly from 50 to 65, and a outliers  above 80. In contrast, Group 1 (Death Event) shows a slightly higher median age, around 65, with an IQR spanning from about 55 to the mid-70s and no outliers overall. These findings suggest that patients who experienced a death event tend to be older on average.

@@ -1,0 +1,122 @@
+---
+title: "Mobile Data Pricing Analysis"
+author: "Ziqi Guo"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+params:
+  production: TRUE
+---
+
+```{r, set-chunk-opts, echo = FALSE, eval = params$production}
+library(knitr)
+opts_chunk$set(
+  echo = FALSE, warning = FALSE, message = FALSE
+)
+```
+
+# Introduction
+
+This report analyzes a global dataset of mobile data pricing across 237 countries, collected between January and December 2023. The dataset includes metrics such as the average price of 1GB of data (in both local currencies and USD), cheapest/most expensive prices, and regional classifications. The primary objectives are to:  
+1. Compare regional variations in data costs  
+2. Identify regions with the highest and lowest prices  
+3. Highlight pricing trends and outliers  
+
+```{r, load_data, message=FALSE}
+library(tidyverse)
+library(gtsummary)
+library(kableExtra)
+library(here)
+
+here::i_am("Final_project_2.Rmd")
+clean_data <- readRDS(
+  file = here::here("data", "clean_data.rds")
+)
+
+```
+
+
+# Descriptive Analysis
+
+
+### Regional Price Summary Table
+```{r, regional-price-summary-table}
+
+regional_summary <- readRDS(
+  file = here::here("output/regional_summary.rds")
+)
+regional_summary %>%
+  rename(
+    Region = `Continental region`,
+    `Avg Price` = `Avg Price (USD)`,
+    `Min Price` = `Min Price (USD)`,
+    `Max Price` = `Max Price (USD)`,
+    `# Countries` = `Number of Countries`
+  ) %>%
+  kable(
+    caption = "Regional Summary of Mobile Data Prices (USD)",
+    digits = 2,
+    align = c("l", rep("c", 4))
+  ) %>%
+  kable_styling(
+    bootstrap_options = c("striped", "hover", "condensed"),
+    full_width = FALSE,
+    font_size = 14,
+    position = "center"
+  ) %>%
+  row_spec(0, bold = TRUE, color = "white", background = "#3498db") %>%
+  column_spec(1, bold = TRUE) %>%
+  add_header_above(c(" " = 1, "Price in USD" = 3, " " = 1)) %>%
+  footnote(
+    general = "Data collected between January-December 2023",
+    general_title = "Note:"
+  )
+```
+
+**Table 1: Regional Summary of Mobile Data Pricing (USD)**
+
+1. **Highest Average Price**:
+   - **NORTHERN AMERICA** has the highest average price of **$4.59** for 1GB of mobile data.
+   - **SUB-SAHARAN AFRICA** follows closely with an average price of **$4.03**.
+
+2. **Lowest Average Price**:
+   - **NORTHERN AFRICA** has the lowest average price of **$0.86**, making it the most affordable region for mobile data.
+   - **ASIA (EX. NEAR EAST)** is also relatively affordable, with an average price of **$1.18**.
+
+3. **Wide Price Range**:
+   - **SUB-SAHARAN AFRICA** has the widest range, with prices ranging from **$0.02** (minimum) to **$138.19** (maximum). This indicates significant disparities in pricing within the region.
+   - **NORTHERN AMERICA** also shows a wide range, with prices ranging from **$0.37** to **$83.33**.
+
+4. **Number of Countries**:
+   - **ASIA (EX. NEAR EAST)** includes the most countries (**25**) in the dataset, while **BALTICS** has the fewest (**1**).
+
+5. **Outliers**:
+   - The **maximum price** in **SUB-SAHARAN AFRICA** (**$138.19**) is exceptionally high compared to other regions, suggesting extreme pricing in certain countries.
+   - **NORTHERN AMERICA** also has a high maximum price (**$83.33**), indicating expensive data plans in some areas.
+
+# Graphical analysis
+
+### Regional Price Distribution Visualization
+```{r, regional-price-distribution-visualization}
+#| fig.align = "center",
+#| out.width = "800px"
+knitr::include_graphics(
+  here::here("output/price_distribution.png")
+)
+```
+
+**Figure 1: Distribution of 1GB Mobile Data Prices by Region**
+
+1. **Price Distribution**:
+   - The boxplot shows the distribution of 1GB mobile data prices across regions. The **whiskers** represent the range of prices, while the **box** represents the interquartile range (middle 50% of prices).
+
+2. **Outliers**:
+   - **SUB-SAHARAN AFRICA** has several **outliers** (red points) on the higher end, indicating countries with extremely high data prices.
+   - **OCEANIA** and **CIS** also show outliers, suggesting variability in pricing within these regions.
+
+3. **Regional Comparison**:
+   - **NORTHERN AFRICA** and **ASIA (EX. NEAR EAST)** have the **lowest median prices**, making them the most affordable regions.
+   - **NORTHERN AMERICA** and **SUB-SAHARAN AFRICA** have the **highest median prices**, indicating generally higher costs for mobile data.
+
+4. **Consistency**:
+   - **WESTERN EUROPE** and **EASTERN EUROPE** show relatively **consistent pricing**, with narrow boxes and fewer outliers. This suggests more uniform pricing across countries in these regions.
