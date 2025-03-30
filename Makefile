@@ -1,10 +1,11 @@
 # Mobile Data Pricing Project Makefile
 
 # Final HTML report target
-Final_project_2.html: Final_project_2.Rmd \
-                     output/regional_summary.rds \
-                     output/price_distribution.png
-	Rscript -e "rmarkdown::render('Final_project_2.Rmd', output_file = 'Final_project_2.html')"
+Final_project_2.html: code/04_render_report.R \
+	Final_project_2.Rmd \
+	output/regional_summary.rds \
+	output/price_distribution.png
+	Rscript code/04_render_report.R
                
 # Data cleaning
 data/clean_data.rds: code/01_data_cleaning.R data/Data_pricing.xlsx
@@ -23,6 +24,7 @@ output/regional_summary.rds output/price_distribution.png: \
 clean:
 	rm -f output/*.rds && \
 	rm -f output/*.png && \
+	rm -f output/*.csv && \
 	rm -f Final_project_2.html
 
 # Shortcut to build everything
