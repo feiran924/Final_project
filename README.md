@@ -1,3 +1,7 @@
+# My Final Project
+
+This repository contains the code and report for my final project.
+
 # Mobile Data Pricing Analysis
 
 This project analyzes global mobile data pricing across 237 countries, collected in 2023.
@@ -11,7 +15,12 @@ This project analyzes global mobile data pricing across 237 countries, collected
 
 ## How to Generate the Report
 
-1. Clone this repository
+## Synchronizing the Package Environment
+To ensure you have the exact package versions used to create this report, follow these steps:
+
+1. **Clone the Repository**: Clone this repository to your local machine using:
+   ```bash
+   git clone https://github.com/ziqiguo567/Final_project.git
 2. Run `make` in the terminal to:
    - Clean and prepare the data
    - Perform analyses

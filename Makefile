@@ -30,3 +30,7 @@ clean:
 # Shortcut to build everything
 .PHONY: all
 all: Final_project_2.html
+
+# Restore the package environment using renv
+install:
+	R -e "renv::restore()"
