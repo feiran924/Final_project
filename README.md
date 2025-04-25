@@ -30,8 +30,8 @@ This repository contains the code and resources for the Mobile Data Pricing Proj
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/mobile-data-pricing.git
-cd mobile-data-pricing
+git clone https://github.com/your-username/Final_project.git
+cd Final_project
 ```
 
 ### 2. Set Up Docker (Recommended)
