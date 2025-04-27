@@ -18,48 +18,27 @@ RUN apt-get update && \
         libjpeg-dev \
     && rm -rf /var/lib/apt/lists/*
 
-
-# 2. Install renv and here package explicitly
-RUN R -e "install.packages(c('renv', 'here'), repos='https://cloud.r-project.org')"
-
-# 2. Configure renv environment before installation
-ENV RENV_WATCHDOG_ENABLED=FALSE
-ENV RENV_PATHS_CACHE=/renv/cache 
-
-
 # Set up project structure
+RUN mkdir /project
 WORKDIR /project
-RUN mkdir -p data code output report renv
 
-# Copy only renv files first (better caching)
-COPY renv.lock renv.lock
-COPY .Rprofile .Rprofile
-COPY renv/activate.R renv/activate.R
+RUN mkdir data
+RUN mkdir code
+RUN mkdir output
+RUN mkdir report
 
-# Force include 'here' in renv
-RUN R -e "renv::consent(TRUE); \
-           if (!'here' %in% installed.packages()) install.packages('here'); \
-           renv::hydrate('here'); \
-           renv::restore()"
-
-# Verify installation
-RUN R -e "library(here); \
-           renv::record('here'); \
-           writeLines(as.character(packageVersion('here')), '/project/here_version.txt')"
-
-COPY data/Data_pricing.xlsx ./data/
+COPY data data
 COPY code code
 COPY Makefile .
 COPY Final_project_2.Rmd .
 
-# Create report directory (only if doesn't exist)
-RUN mkdir -p report
+COPY .Rprofile .
+COPY renv.lock .
+RUN mkdir renv
+COPY renv/activate.R renv
+COPY renv/settings.json renv
 
-RUN R -e "if (!requireNamespace('here', quietly = TRUE)) { \
-             install.packages('here', repos='https://cloud.r-project.org'); \
-             library(here) \
-           }; \
-           packageVersion('here')"
-           
-# Set the default command to run your report script
-CMD ["Rscript", "-e", "library(here); library(renv); renv::activate(); source('code/04_render_report.R')"]
+RUN Rscript -e "renv::restore(prompt=FALSE)"
+
+# entry point
+CMD make

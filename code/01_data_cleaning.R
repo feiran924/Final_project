@@ -1,7 +1,7 @@
 here::i_am("code/01_data_cleaning.R")
 
 # Define path to raw data
-absolute_path_to_data <- here::here("data", "Data pricing.xlsx")
+absolute_path_to_data <- here::here("data", "Data_pricing.xlsx")
 
 # Load raw data
 raw_data <- readxl::read_excel(
