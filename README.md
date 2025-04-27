@@ -44,22 +44,6 @@ The project uses Docker for reproducible execution.
 docker pull ziqiguo567/mobile-data-pricing
 ```
 
-#### (Optional) Build the Docker Image
-
-To build the image locally:
-
-```bash
-make docker-build
-```
-
-#### (Optional) Push the Docker Image
-
-To share a modified image:
-
-```bash
-make docker-push
-```
-
 ### 3. Set Up Local R Environment (Optional)
 
 For local development, restore R package dependencies:
@@ -76,14 +60,6 @@ Generate the final report (`report/Final_project_2.html`):
 
 ```bash
 make report
-```
-
-### Generate the Report (Local)
-
-For local execution (requires R and dependencies):
-
-```bash
-make local-report
 ```
 
 ### Data Processing
