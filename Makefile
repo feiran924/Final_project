@@ -16,8 +16,6 @@ output/regional_summary.rds output/price_distribution.png: code/02_analysis.R co
 # Docker-based report generation
 .PHONY: report
 report: 
-	@echo "Building Docker image..."
-	docker build -t ziqiguo567/mobile-data-pricing .
 	@echo "Running report generation in Docker..."
 	docker run --rm \
 		-v "$(shell pwd)/data:/project/data" \
