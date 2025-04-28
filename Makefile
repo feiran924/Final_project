@@ -13,6 +13,11 @@ data/clean_data.rds: code/01_data_cleaning.R data/Data_pricing.xlsx
 output/regional_summary.rds output/price_distribution.png: code/02_analysis.R code/03_visualization.R data/clean_data.rds
 	Rscript code/02_analysis.R && Rscript code/03_visualization.R
 
+# Standalone Docker build (optional)
+.PHONY: build
+build:
+	docker build -t $(IMAGE_NAME) .
+
 # Docker-based report generation
 .PHONY: report
 report: 
